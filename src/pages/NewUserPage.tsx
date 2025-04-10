@@ -4,12 +4,12 @@ import { NewUser } from '../types/types';
 import UserForm from './UserForm';
 
 const NewUserPage = () => {
-  const createUser = useCreateUser();
+  const createUserHandler = useCreateUser();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: NewUser) => {
+  const createUser = async (data: NewUser) => {
     try {
-      createUser.mutate(data);
+      createUserHandler.mutate(data);
       navigate({ to: '/users' });
     } catch (err) {
       console.error('Error saving user:', err);
@@ -19,7 +19,7 @@ const NewUserPage = () => {
   return (
     <UserForm
       mode="create"
-      onSubmit={onSubmit}
+      onSubmit={createUser}
     />
   );
 };
