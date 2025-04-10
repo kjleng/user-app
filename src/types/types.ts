@@ -4,7 +4,6 @@ export interface User {
   email: string;
   role: string;
   status: 'active' | 'inactive';
-  createdAt: string;
 }
 
-export type NewUser = Omit<User, 'id' | 'createdAt'>;
+export type NewUser = Omit<User, 'id'>;

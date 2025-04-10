@@ -21,16 +21,18 @@ export const useUsers = () => {
 
 // Get a single user
 export const useUser = (userId: string) => {
+  console.log('userId in useUser = ', userId)
   return useQuery({
     queryKey: ['users', userId],
     queryFn: async () => {
+      console.log("in queryFn")
       const response = await fetch(`${API_URL}/${userId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch user');
       }
       return await response.json();
     },
-    enabled: !!userId,
+    // enabled: !!userId,
   })
 };
 

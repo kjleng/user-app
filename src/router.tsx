@@ -2,7 +2,8 @@ import { createRootRouteWithContext, createRoute } from '@tanstack/react-router'
 import Layout from './Layout';
 import Dashboard from './pages/Dashboard';
 import UserList from './pages/UserList';
-import UserForm from './pages/UserForm';
+import NewUserPage from './pages/NewUserPage';
+import EditUserPage from './pages/EditUserPage';
 import UserDetails from './pages/UserDetails';
 import { QueryClient } from '@tanstack/react-query'
 
@@ -29,14 +30,14 @@ const usersRoute = createRoute({
 const newUserRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'users/new',
-  component: UserForm,
+  component: NewUserPage,
 });
 
 // Define the edit user route
 const editUserRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'users/$userId/edit',
-  component: UserForm,
+  component: EditUserPage,
   // loader: async ({ context: { queryClient }, params }) => {
   //   return queryClient.ensureQueryData(['user', params.userId], () =>
   //     fetch(`/api/users/${params.userId}`).then(res => res.json())

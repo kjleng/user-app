@@ -1,58 +1,25 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { useUser, useCreateUser, useUpdateUser } from '../hooks/useUsers';
-import { NewUser } from '../types/types';
-import { useEffect } from 'react';
+import { NewUser, User } from '../types/types';
 
-const UserForm = () => {
-  const params = useParams({ from: '/users/$userId/edit' });
-  const userId = params?.userId;
-  const isEditMode = !!userId;
+interface UserFormProps {
+  user?: Partial<User>; // may be empty for create
+  mode: "create" | "edit";
+  onSubmit: (data: Omit<User, "id">) => Promise<void>;
+}
 
-  const { data: user } = useUser(userId || '');
-  const createUser = useCreateUser();
-  const updateUser = useUpdateUser();
+const UserForm = ({ user = {}, mode, onSubmit }: UserFormProps) => {
   const navigate = useNavigate();
-
   // Setup form with react-hook-form
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<NewUser>({
-    defaultValues: isEditMode && user ? {
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-    } : {
-      name: '',
-      email: '',
-      role: 'User',
-      status: 'active',
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<NewUser>({
+    defaultValues: {
+      name: user.name || "",
+      email: user.email || "",
+      role: user.role || ""
     }
   });
 
-  // Reset form when user data is loaded
-  useEffect(() => {
-    if (isEditMode && user) {
-      reset({
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        status: user.status,
-      });
-    }
-  }, [user, reset, isEditMode]);
-
-  const onSubmit = async (data: NewUser) => {
-    try {
-      if (isEditMode && userId) {
-        updateUser.mutate({ userId, data });
-      } else {
-        createUser.mutate(data);
-      }
-      navigate({ to: '/users' });
-    } catch (err) {
-      console.error('Error saving user:', err);
-    }
-  };
+  const isEditMode = mode === "edit";
 
   return (
     <div className="space-y-6">
@@ -147,9 +114,9 @@ const UserForm = () => {
             <button
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-              disabled={createUser.isPending || updateUser.isPending}
+              disabled={isSubmitting}
             >
-              {createUser.isPending || updateUser.isPending ? 'Saving...' : 'Save User'}
+              {isSubmitting ? 'Saving...' : 'Save User'}
             </button>
           </div>
         </form>
